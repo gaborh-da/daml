@@ -9,6 +9,7 @@ This page contains release notes for the SDK.
 HEAD — ongoing
 --------------
 - Making transaction lookups performant so we can handle such requests for large ledgers as well
+- We now color stale IDE diagnostics green to indicate that they are not current
 
 - Sandbox: Transactions with a record time that is after the maximum record time (as provided in the original command)
   are now properly rejected instead of committed to the ledger: `#987 <https://github.com/digital-asset/daml/issues/987>`_
