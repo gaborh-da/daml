@@ -77,6 +77,7 @@ da_haskell_library(
         "//compiler/haskell-ide-core",
         "//compiler/scenario-service/client",
         "//daml-lf/archive:daml_lf_haskell_proto",
+        "//daml-assistant:daml-project-config",
         "//libs-haskell/bazel-runfiles",
         "//libs-haskell/da-hs-base",
         "//libs-haskell/da-hs-language-server",
