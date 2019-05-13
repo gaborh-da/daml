@@ -21,8 +21,8 @@ import GHC.CString (fromString)
 import GHC.Tuple ()  -- We're using tuples but they are builtin syntax.
 import GHC.Types
 
--- | `shows` returns a function that prepends the
--- output 'Text' to an existing 'Text'.  This allows constant-time
+-- | `showS` is a function that prepends the
+-- output `Text` to an existing `Text`.  This allows constant-time
 -- concatenation of results using function composition.
 type ShowS = Text -> Text
 
