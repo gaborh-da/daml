@@ -27,8 +27,8 @@
 # be resolvable from external workspaces otherwise.
 
 rules_scala_version = "78104d8014d4e4fc8f905cd34b91dfabd9a268c8"
-rules_haskell_version = "1d85570f2383e376e4b9406a0aa33961a2c0aece"
-rules_haskell_sha256 = "32accba7d598453c1f3be8af2c7532d325323ad20bda54166b0e8a69c51b92e8"
+rules_haskell_version = "e84128880fafbea2f17635da91ae457bc84dfac7"
+rules_haskell_sha256 = "5f4225cf87a00ae779d1290ce31a81aee309623a19b1964bbdddc3dd8f5f7ddf"
 rules_nixpkgs_version = "5ffb8a4ee9a52bc6bc12f95cd64ecbd82a79bc82"
 
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
@@ -44,6 +44,7 @@ def daml_deps():
                 "@com_github_digital_asset_daml//bazel_tools:haskell-static-linking.patch",
                 "@com_github_digital_asset_daml//bazel_tools:haskell-package-env.patch",
                 "@com_github_digital_asset_daml//bazel_tools:haskell-drop-fake-static.patch",
+                "@com_github_digital_asset_daml//bazel_tools:haskell-keep-hs-extra-libs.patch",
             ],
             patch_args = ["-p1"],
             sha256 = rules_haskell_sha256,

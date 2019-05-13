@@ -1,0 +1,526 @@
+
+load(
+    "@io_tweag_rules_haskell//haskell:haskell.bzl",
+    "haskell_import",
+    "haskell_toolchain",
+)
+
+filegroup(
+    name = "bin",
+    srcs = glob(["bin/*"]),
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "time",
+    id = "time-1.8.0.2",
+    deps = ['base-4.12.0.0', 'deepseq-1.4.4.0'],
+    hdrs = glob(['lib/ghc-8.6.5/time-1.8.0.2/include/**/*.h']),
+    includes = ['external/io_tweag_rules_haskell_ghc_nixpkgs_haskell_toolchain/lib/ghc-8.6.5/time-1.8.0.2/include'],
+    linkopts = ['-lHStime-1.8.0.2'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "1.8.0.2",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "pretty",
+    id = "pretty-1.1.3.6",
+    deps = ['base-4.12.0.0', 'deepseq-1.4.4.0', 'ghc-prim-0.5.3'],
+    hdrs = glob([]),
+    includes = [],
+    linkopts = ['-lHSpretty-1.1.3.6'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "1.1.3.6",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "terminfo",
+    id = "terminfo-0.4.1.2",
+    deps = ['base-4.12.0.0'],
+    hdrs = glob([]),
+    includes = [],
+    linkopts = ['-L/nix/store/k0y9nrym785l61pjw0lp0qk90v2nbpqs-ncurses-6.1-20190112/lib', '-L/nix/store/k0y9nrym785l61pjw0lp0qk90v2nbpqs-ncurses-6.1-20190112/lib', '-lHSterminfo-0.4.1.2', '-ltinfo'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "0.4.1.2",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "template-haskell",
+    id = "template-haskell-2.14.0.0",
+    deps = ['base-4.12.0.0', 'ghc-boot-th-8.6.5', 'pretty-1.1.3.6'],
+    hdrs = glob([]),
+    includes = [],
+    linkopts = ['-lHStemplate-haskell-2.14.0.0'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "2.14.0.0",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "ghc-boot-th",
+    id = "ghc-boot-th-8.6.5",
+    deps = ['base-4.12.0.0'],
+    hdrs = glob([]),
+    includes = [],
+    linkopts = ['-lHSghc-boot-th-8.6.5'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "8.6.5",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "ghc",
+    id = "ghc-8.6.5",
+    deps = ['array-0.5.3.0', 'base-4.12.0.0', 'binary-0.8.6.0', 'bytestring-0.10.8.2', 'containers-0.6.0.1', 'deepseq-1.4.4.0', 'directory-1.3.3.0', 'filepath-1.4.2.1', 'ghc-boot-8.6.5', 'ghc-boot-th-8.6.5', 'ghc-heap-8.6.5', 'ghci-8.6.5', 'hpc-0.6.0.3', 'process-1.6.5.0', 'template-haskell-2.14.0.0', 'terminfo-0.4.1.2', 'time-1.8.0.2', 'transformers-0.5.6.2', 'unix-2.7.2.2'],
+    hdrs = glob(['lib/ghc-8.6.5/ghc-8.6.5/include/**/*.h']),
+    includes = ['external/io_tweag_rules_haskell_ghc_nixpkgs_haskell_toolchain/lib/ghc-8.6.5/ghc-8.6.5/include'],
+    linkopts = ['-lHSghc-8.6.5'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "8.6.5",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "parsec",
+    id = "parsec-3.1.13.0",
+    deps = ['base-4.12.0.0', 'bytestring-0.10.8.2', 'mtl-2.2.2', 'text-1.2.3.1'],
+    hdrs = glob([]),
+    includes = [],
+    linkopts = ['-lHSparsec-3.1.13.0'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "3.1.13.0",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "text",
+    id = "text-1.2.3.1",
+    deps = ['array-0.5.3.0', 'base-4.12.0.0', 'binary-0.8.6.0', 'bytestring-0.10.8.2', 'deepseq-1.4.4.0', 'ghc-prim-0.5.3', 'integer-simple-0.1.1.1'],
+    hdrs = glob([]),
+    includes = [],
+    linkopts = ['-lHStext-1.2.3.1'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "1.2.3.1",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "ghci",
+    id = "ghci-8.6.5",
+    deps = ['array-0.5.3.0', 'base-4.12.0.0', 'binary-0.8.6.0', 'bytestring-0.10.8.2', 'containers-0.6.0.1', 'deepseq-1.4.4.0', 'filepath-1.4.2.1', 'ghc-boot-8.6.5', 'ghc-boot-th-8.6.5', 'ghc-heap-8.6.5', 'template-haskell-2.14.0.0', 'transformers-0.5.6.2', 'unix-2.7.2.2'],
+    hdrs = glob([]),
+    includes = [],
+    linkopts = ['-lHSghci-8.6.5'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "8.6.5",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "stm",
+    id = "stm-2.5.0.0",
+    deps = ['array-0.5.3.0', 'base-4.12.0.0'],
+    hdrs = glob([]),
+    includes = [],
+    linkopts = ['-lHSstm-2.5.0.0'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "2.5.0.0",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "ghc-compact",
+    id = "ghc-compact-0.1.0.0",
+    deps = ['base-4.12.0.0', 'bytestring-0.10.8.2', 'ghc-prim-0.5.3'],
+    hdrs = glob([]),
+    includes = [],
+    linkopts = ['-lHSghc-compact-0.1.0.0'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "0.1.0.0",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "binary",
+    id = "binary-0.8.6.0",
+    deps = ['array-0.5.3.0', 'base-4.12.0.0', 'bytestring-0.10.8.2', 'containers-0.6.0.1'],
+    hdrs = glob([]),
+    includes = [],
+    linkopts = ['-lHSbinary-0.8.6.0'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "0.8.6.0",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "mtl",
+    id = "mtl-2.2.2",
+    deps = ['base-4.12.0.0', 'transformers-0.5.6.2'],
+    hdrs = glob([]),
+    includes = [],
+    linkopts = ['-lHSmtl-2.2.2'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "2.2.2",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "base",
+    id = "base-4.12.0.0",
+    deps = ['ghc-prim-0.5.3', 'integer-simple-0.1.1.1', 'rts'],
+    hdrs = glob(['lib/ghc-8.6.5/base-4.12.0.0/include/**/*.h']),
+    includes = ['external/io_tweag_rules_haskell_ghc_nixpkgs_haskell_toolchain/lib/ghc-8.6.5/base-4.12.0.0/include'],
+    linkopts = ['-lHSbase-4.12.0.0'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "4.12.0.0",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "unix",
+    id = "unix-2.7.2.2",
+    deps = ['base-4.12.0.0', 'bytestring-0.10.8.2', 'time-1.8.0.2'],
+    hdrs = glob(['lib/ghc-8.6.5/unix-2.7.2.2/include/**/*.h']),
+    includes = ['external/io_tweag_rules_haskell_ghc_nixpkgs_haskell_toolchain/lib/ghc-8.6.5/unix-2.7.2.2/include'],
+    linkopts = ['-lHSunix-2.7.2.2', '-lrt', '-lutil', '-ldl', '-lpthread'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "2.7.2.2",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "filepath",
+    id = "filepath-1.4.2.1",
+    deps = ['base-4.12.0.0'],
+    hdrs = glob([]),
+    includes = [],
+    linkopts = ['-lHSfilepath-1.4.2.1'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "1.4.2.1",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "Cabal",
+    id = "Cabal-2.4.0.1",
+    deps = ['array-0.5.3.0', 'base-4.12.0.0', 'binary-0.8.6.0', 'bytestring-0.10.8.2', 'containers-0.6.0.1', 'deepseq-1.4.4.0', 'directory-1.3.3.0', 'filepath-1.4.2.1', 'mtl-2.2.2', 'parsec-3.1.13.0', 'pretty-1.1.3.6', 'process-1.6.5.0', 'text-1.2.3.1', 'time-1.8.0.2', 'transformers-0.5.6.2', 'unix-2.7.2.2'],
+    hdrs = glob([]),
+    includes = [],
+    linkopts = ['-lHSCabal-2.4.0.1'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "2.4.0.1",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "integer-simple",
+    id = "integer-simple-0.1.1.1",
+    deps = ['ghc-prim-0.5.3'],
+    hdrs = glob([]),
+    includes = [],
+    linkopts = ['-lHSinteger-simple-0.1.1.1'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "0.1.1.1",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "ghc-heap",
+    id = "ghc-heap-8.6.5",
+    deps = ['base-4.12.0.0', 'ghc-prim-0.5.3', 'rts'],
+    hdrs = glob([]),
+    includes = [],
+    linkopts = ['-lHSghc-heap-8.6.5'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "8.6.5",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "transformers",
+    id = "transformers-0.5.6.2",
+    deps = ['base-4.12.0.0'],
+    hdrs = glob([]),
+    includes = [],
+    linkopts = ['-lHStransformers-0.5.6.2'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "0.5.6.2",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "haskeline",
+    id = "haskeline-0.7.4.3",
+    deps = ['base-4.12.0.0', 'bytestring-0.10.8.2', 'containers-0.6.0.1', 'directory-1.3.3.0', 'filepath-1.4.2.1', 'process-1.6.5.0', 'stm-2.5.0.0', 'terminfo-0.4.1.2', 'transformers-0.5.6.2', 'unix-2.7.2.2'],
+    hdrs = glob([]),
+    includes = [],
+    linkopts = ['-lHShaskeline-0.7.4.3'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "0.7.4.3",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "ghc-prim",
+    id = "ghc-prim-0.5.3",
+    deps = ['rts'],
+    hdrs = glob([]),
+    includes = [],
+    linkopts = ['-lHSghc-prim-0.5.3'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "0.5.3",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "process",
+    id = "process-1.6.5.0",
+    deps = ['base-4.12.0.0', 'deepseq-1.4.4.0', 'directory-1.3.3.0', 'filepath-1.4.2.1', 'unix-2.7.2.2'],
+    hdrs = glob(['lib/ghc-8.6.5/process-1.6.5.0/include/**/*.h']),
+    includes = ['external/io_tweag_rules_haskell_ghc_nixpkgs_haskell_toolchain/lib/ghc-8.6.5/process-1.6.5.0/include'],
+    linkopts = ['-lHSprocess-1.6.5.0'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "1.6.5.0",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "bytestring",
+    id = "bytestring-0.10.8.2",
+    deps = ['base-4.12.0.0', 'deepseq-1.4.4.0', 'ghc-prim-0.5.3'],
+    hdrs = glob(['lib/ghc-8.6.5/bytestring-0.10.8.2/include/**/*.h']),
+    includes = ['external/io_tweag_rules_haskell_ghc_nixpkgs_haskell_toolchain/lib/ghc-8.6.5/bytestring-0.10.8.2/include'],
+    linkopts = ['-lHSbytestring-0.10.8.2'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "0.10.8.2",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "hpc",
+    id = "hpc-0.6.0.3",
+    deps = ['base-4.12.0.0', 'containers-0.6.0.1', 'directory-1.3.3.0', 'filepath-1.4.2.1', 'time-1.8.0.2'],
+    hdrs = glob([]),
+    includes = [],
+    linkopts = ['-lHShpc-0.6.0.3'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "0.6.0.3",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "directory",
+    id = "directory-1.3.3.0",
+    deps = ['base-4.12.0.0', 'filepath-1.4.2.1', 'time-1.8.0.2', 'unix-2.7.2.2'],
+    hdrs = glob([]),
+    includes = [],
+    linkopts = ['-lHSdirectory-1.3.3.0'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "1.3.3.0",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "array",
+    id = "array-0.5.3.0",
+    deps = ['base-4.12.0.0'],
+    hdrs = glob([]),
+    includes = [],
+    linkopts = ['-lHSarray-0.5.3.0'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "0.5.3.0",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "rts",
+    id = "rts",
+    deps = [],
+    hdrs = glob(['lib/ghc-8.6.5/include/**/*.h']),
+    includes = ['external/io_tweag_rules_haskell_ghc_nixpkgs_haskell_toolchain/lib/ghc-8.6.5/include'],
+    linkopts = ['-Wl,-u,base_GHCziTopHandler_runIO_closure', '-Wl,-u,base_GHCziTopHandler_runNonIO_closure', '-Wl,-u,ghczmprim_GHCziTuple_Z0T_closure', '-Wl,-u,ghczmprim_GHCziTypes_True_closure', '-Wl,-u,ghczmprim_GHCziTypes_False_closure', '-Wl,-u,base_GHCziPack_unpackCString_closure', '-Wl,-u,base_GHCziWeak_runFinalizzerBatch_closure', '-Wl,-u,base_GHCziIOziException_stackOverflow_closure', '-Wl,-u,base_GHCziIOziException_heapOverflow_closure', '-Wl,-u,base_GHCziIOziException_allocationLimitExceeded_closure', '-Wl,-u,base_GHCziIOziException_blockedIndefinitelyOnMVar_closure', '-Wl,-u,base_GHCziIOziException_blockedIndefinitelyOnSTM_closure', '-Wl,-u,base_GHCziIOziException_cannotCompactFunction_closure', '-Wl,-u,base_GHCziIOziException_cannotCompactPinned_closure', '-Wl,-u,base_GHCziIOziException_cannotCompactMutable_closure', '-Wl,-u,base_ControlziExceptionziBase_absentSumFieldError_closure', '-Wl,-u,base_ControlziExceptionziBase_nonTermination_closure', '-Wl,-u,base_ControlziExceptionziBase_nestedAtomically_closure', '-Wl,-u,base_GHCziEventziThread_blockedOnBadFD_closure', '-Wl,-u,base_GHCziConcziSync_runSparks_closure', '-Wl,-u,base_GHCziConcziIO_ensureIOManagerIsRunning_closure', '-Wl,-u,base_GHCziConcziIO_ioManagerCapabilitiesChanged_closure', '-Wl,-u,base_GHCziConcziSignal_runHandlersPtr_closure', '-Wl,-u,base_GHCziTopHandler_flushStdHandles_closure', '-Wl,-u,base_GHCziTopHandler_runMainIO_closure', '-Wl,-u,ghczmprim_GHCziTypes_Czh_con_info', '-Wl,-u,ghczmprim_GHCziTypes_Izh_con_info', '-Wl,-u,ghczmprim_GHCziTypes_Fzh_con_info', '-Wl,-u,ghczmprim_GHCziTypes_Dzh_con_info', '-Wl,-u,ghczmprim_GHCziTypes_Wzh_con_info', '-Wl,-u,base_GHCziPtr_Ptr_con_info', '-Wl,-u,base_GHCziPtr_FunPtr_con_info', '-Wl,-u,base_GHCziInt_I8zh_con_info', '-Wl,-u,base_GHCziInt_I16zh_con_info', '-Wl,-u,base_GHCziInt_I32zh_con_info', '-Wl,-u,base_GHCziInt_I64zh_con_info', '-Wl,-u,base_GHCziWord_W8zh_con_info', '-Wl,-u,base_GHCziWord_W16zh_con_info', '-Wl,-u,base_GHCziWord_W32zh_con_info', '-Wl,-u,base_GHCziWord_W64zh_con_info', '-Wl,-u,base_GHCziStable_StablePtr_con_info', '-Wl,-u,hs_atomic_add8', '-Wl,-u,hs_atomic_add16', '-Wl,-u,hs_atomic_add32', '-Wl,-u,hs_atomic_add64', '-Wl,-u,hs_atomic_sub8', '-Wl,-u,hs_atomic_sub16', '-Wl,-u,hs_atomic_sub32', '-Wl,-u,hs_atomic_sub64', '-Wl,-u,hs_atomic_and8', '-Wl,-u,hs_atomic_and16', '-Wl,-u,hs_atomic_and32', '-Wl,-u,hs_atomic_and64', '-Wl,-u,hs_atomic_nand8', '-Wl,-u,hs_atomic_nand16', '-Wl,-u,hs_atomic_nand32', '-Wl,-u,hs_atomic_nand64', '-Wl,-u,hs_atomic_or8', '-Wl,-u,hs_atomic_or16', '-Wl,-u,hs_atomic_or32', '-Wl,-u,hs_atomic_or64', '-Wl,-u,hs_atomic_xor8', '-Wl,-u,hs_atomic_xor16', '-Wl,-u,hs_atomic_xor32', '-Wl,-u,hs_atomic_xor64', '-Wl,-u,hs_cmpxchg8', '-Wl,-u,hs_cmpxchg16', '-Wl,-u,hs_cmpxchg32', '-Wl,-u,hs_cmpxchg64', '-Wl,-u,hs_atomicread8', '-Wl,-u,hs_atomicread16', '-Wl,-u,hs_atomicread32', '-Wl,-u,hs_atomicread64', '-Wl,-u,hs_atomicwrite8', '-Wl,-u,hs_atomicwrite16', '-Wl,-u,hs_atomicwrite32', '-Wl,-u,hs_atomicwrite64', '-L/nix/store/kbbiky87bsdndh63m7919sxkf3gsh5zq-libffi-3.2.1/lib', '-lm', '-lrt', '-ldl', '-lffi', '-lpthread'],
+    shared_libraries = glob(['lib/ghc-8.6.5/rts/libHSrts-ghc*.dll', 'lib/ghc-8.6.5/rts/libHSrts-ghc*.dylib', 'lib/ghc-8.6.5/rts/libHSrts-ghc*.so']),
+    static_libraries = glob(['lib/ghc-8.6.5/rts/libHSrts.a']),
+    static_profiling_libraries = glob(['lib/ghc-8.6.5/rts/libHSrts_p.a']),
+    version = "1.0",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "xhtml",
+    id = "xhtml-3000.2.2.1",
+    deps = ['base-4.12.0.0'],
+    hdrs = glob([]),
+    includes = [],
+    linkopts = ['-lHSxhtml-3000.2.2.1'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "3000.2.2.1",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "ghc-boot",
+    id = "ghc-boot-8.6.5",
+    deps = ['base-4.12.0.0', 'binary-0.8.6.0', 'bytestring-0.10.8.2', 'directory-1.3.3.0', 'filepath-1.4.2.1', 'ghc-boot-th-8.6.5'],
+    hdrs = glob([]),
+    includes = [],
+    linkopts = ['-lHSghc-boot-8.6.5'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "8.6.5",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "libiserv",
+    id = "libiserv-8.6.3",
+    deps = ['base-4.12.0.0', 'binary-0.8.6.0', 'bytestring-0.10.8.2', 'containers-0.6.0.1', 'deepseq-1.4.4.0', 'ghci-8.6.5', 'unix-2.7.2.2'],
+    hdrs = glob([]),
+    includes = [],
+    linkopts = ['-lHSlibiserv-8.6.3'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "8.6.3",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "deepseq",
+    id = "deepseq-1.4.4.0",
+    deps = ['array-0.5.3.0', 'base-4.12.0.0'],
+    hdrs = glob([]),
+    includes = [],
+    linkopts = ['-lHSdeepseq-1.4.4.0'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "1.4.4.0",
+    visibility = ["//visibility:public"],
+)
+
+haskell_import(
+    name = "containers",
+    id = "containers-0.6.0.1",
+    deps = ['array-0.5.3.0', 'base-4.12.0.0', 'deepseq-1.4.4.0', 'ghc-prim-0.5.3'],
+    hdrs = glob([]),
+    includes = [],
+    linkopts = ['-lHScontainers-0.6.0.1'],
+    shared_libraries = glob([]),
+    static_libraries = glob([]),
+    static_profiling_libraries = glob([]),
+    version = "0.6.0.1",
+    visibility = ["//visibility:public"],
+)
+
+alias(name = 'time-1.8.0.2', actual = 'time')
+alias(name = 'pretty-1.1.3.6', actual = 'pretty')
+alias(name = 'terminfo-0.4.1.2', actual = 'terminfo')
+alias(name = 'template-haskell-2.14.0.0', actual = 'template-haskell')
+alias(name = 'ghc-boot-th-8.6.5', actual = 'ghc-boot-th')
+alias(name = 'ghc-8.6.5', actual = 'ghc')
+alias(name = 'parsec-3.1.13.0', actual = 'parsec')
+alias(name = 'text-1.2.3.1', actual = 'text')
+alias(name = 'ghci-8.6.5', actual = 'ghci')
+alias(name = 'stm-2.5.0.0', actual = 'stm')
+alias(name = 'ghc-compact-0.1.0.0', actual = 'ghc-compact')
+alias(name = 'binary-0.8.6.0', actual = 'binary')
+alias(name = 'mtl-2.2.2', actual = 'mtl')
+alias(name = 'base-4.12.0.0', actual = 'base')
+alias(name = 'unix-2.7.2.2', actual = 'unix')
+alias(name = 'filepath-1.4.2.1', actual = 'filepath')
+alias(name = 'Cabal-2.4.0.1', actual = 'Cabal')
+alias(name = 'integer-simple-0.1.1.1', actual = 'integer-simple')
+alias(name = 'ghc-heap-8.6.5', actual = 'ghc-heap')
+alias(name = 'transformers-0.5.6.2', actual = 'transformers')
+alias(name = 'haskeline-0.7.4.3', actual = 'haskeline')
+alias(name = 'ghc-prim-0.5.3', actual = 'ghc-prim')
+alias(name = 'process-1.6.5.0', actual = 'process')
+alias(name = 'bytestring-0.10.8.2', actual = 'bytestring')
+alias(name = 'hpc-0.6.0.3', actual = 'hpc')
+alias(name = 'directory-1.3.3.0', actual = 'directory')
+alias(name = 'array-0.5.3.0', actual = 'array')
+alias(name = 'xhtml-3000.2.2.1', actual = 'xhtml')
+alias(name = 'ghc-boot-8.6.5', actual = 'ghc-boot')
+alias(name = 'libiserv-8.6.3', actual = 'libiserv')
+alias(name = 'deepseq-1.4.4.0', actual = 'deepseq')
+alias(name = 'containers-0.6.0.1', actual = 'containers')
+
+toolchain_libraries = ['time', 'pretty', 'terminfo', 'template-haskell', 'ghc-boot-th', 'ghc', 'parsec', 'text', 'ghci', 'stm', 'ghc-compact', 'binary', 'mtl', 'base', 'unix', 'filepath', 'Cabal', 'integer-simple', 'ghc-heap', 'transformers', 'haskeline', 'ghc-prim', 'process', 'bytestring', 'hpc', 'directory', 'array', 'rts', 'xhtml', 'ghc-boot', 'libiserv', 'deepseq', 'containers']
+
+
+
+haskell_toolchain(
+    name = "toolchain-impl",
+    tools = ["@io_tweag_rules_haskell_ghc_nixpkgs//:bin"],
+    libraries = toolchain_libraries,
+    version = "8.6.5",
+    compiler_flags = ["-O1", "-fexternal-dynamic-refs", "-hide-package=ghc-boot-th"] + select({"//conditions:default": []}),
+    haddock_flags = [],
+    repl_ghci_args = ["-O0", "-fexternal-interpreter", "-Wwarn"],
+    # On Darwin we don't need a locale archive. It's a Linux-specific
+    # hack in Nixpkgs.
+    locale_archive = "@glibc_locales//:locale-archive",
+    visibility = ["//visibility:public"],
+)
+        

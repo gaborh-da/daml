@@ -203,7 +203,6 @@ nix_ghc_deps = common_nix_file_deps + [
     "//nix:ghc.nix",
     "//nix:with-packages-wrapper.nix",
     "//nix:overrides/ghc-8.6.5.nix",
-    "//nix:overrides/c2hs-0.28.6.nix",
     "//nix:overrides/ghc-8.6.3-binary.nix",
     "//nix:overrides/language-c-0.8.2.nix",
 ]
@@ -223,8 +222,7 @@ exports_files(glob(["lib/**/*"]))
 
 # Used by Darwin and Linux
 haskell_register_ghc_nixpkgs(
-    attribute_path = "ghcWithC2hs",
-    build_file = "@io_tweag_rules_haskell//haskell:ghc.BUILD",
+    attribute_path = "ghcStatic",
 
     # -fexternal-dynamic-refs is required so that we produce position-independent
     # relocations against some functions (-fPIC alone isn’t sufficient).
@@ -242,6 +240,7 @@ haskell_register_ghc_nixpkgs(
     locale_archive = "@glibc_locales//:locale-archive",
     nix_file = "//nix:bazel.nix",
     nix_file_deps = nix_ghc_deps,
+    build_file = "@com_github_digital_asset_daml//3rdparty/haskell:BUILD.ghc",
     repl_ghci_args = [
         "-O0",
         "-fexternal-interpreter",
@@ -436,8 +435,8 @@ hazel_repositories(
         "ffi": "@com_github_digital_asset_daml//3rdparty/haskell/ffi_windows:ffi" if is_windows else "@libffi_nix//:ffi",
     },
     ghc_workspaces = {
-        "k8": "@io_tweag_rules_haskell_ghc-nixpkgs",
-        "darwin": "@io_tweag_rules_haskell_ghc-nixpkgs",
+        "k8": "@io_tweag_rules_haskell_ghc_nixpkgs",
+        "darwin": "@io_tweag_rules_haskell_ghc_nixpkgs",
         # although windows is not quite supported yet
         "x64_windows": "@io_tweag_rules_haskell_ghc_windows_amd64",
     },
