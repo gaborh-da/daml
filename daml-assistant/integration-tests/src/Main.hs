@@ -4,10 +4,12 @@
 module Main (main) where
 
 import qualified Codec.Archive.Tar as Tar
+import qualified Codec.Archive.Zip as Zip
 import Control.Concurrent
 import Control.Concurrent.Async
 import Control.Exception
 import Control.Monad
+import qualified Data.ByteString.Lazy as BSL
 import Data.Typeable
 import Network.HTTP.Client
 import Network.HTTP.Types
@@ -23,6 +25,7 @@ import Test.Tasty.HUnit
 
 import DA.Bazel.Runfiles
 import DamlHelper
+import SdkVersion
 
 main :: IO ()
 main =
@@ -49,11 +52,90 @@ tests tmpDir = testGroup "Integration tests"
     , testCase "daml version" $ callProcessQuiet "daml" ["version"]
     , testCase "daml --help" $ callProcessQuiet "daml" ["--help"]
     , testCase "daml new --list" $ callProcessQuiet "daml" ["new", "--list"]
+    , packagingTests tmpDir
     , quickstartTests quickstartDir mvnDir
     ]
     where quickstartDir = tmpDir </> "quickstart"
           mvnDir = tmpDir </> "m2"
           tarballDir = tmpDir </> "tarball"
+
+
+packagingTests :: FilePath -> TestTree
+packagingTests tmpDir = testGroup "packaging"
+    [ testCaseSteps "Build package with dependency" $ \step -> do
+        let projectA = tmpDir </> "a"
+        let projectB = tmpDir </> "b"
+        let aDar = projectA </> "dist" </> "a.dar"
+        let bDar = projectB </> "dist" </> "b.dar"
+        step "Creating project a..."
+        createDirectoryIfMissing True (projectA </> "daml")
+        writeFileUTF8 (projectA </> "daml" </> "A.daml") $ unlines
+            [ "daml 1.2"
+            , "module A (a) where"
+            , "a : ()"
+            , "a = ()"
+            ]
+        writeFileUTF8 (projectA </> "daml.yaml") $ unlines
+            [ "sdk-version: " <> sdkVersion
+            , "name: a"
+            , "version: \"1.0\""
+            , "source: daml/A.daml"
+            , "exposed-modules: [A]"
+            , "dependencies:"
+            , "  - daml-prim"
+            , "  - daml-stdlib"
+            ]
+        withCurrentDirectory projectA $ callProcessQuiet "daml" ["build"]
+        assertBool "a.dar was not created." =<< doesFileExist aDar
+        step "Creating project b..."
+        createDirectoryIfMissing True (projectB </> "daml")
+        writeFileUTF8 (projectB </> "daml" </> "B.daml") $ unlines
+            [ "daml 1.2"
+            , "module B where"
+            , "import A"
+            , "b : ()"
+            , "b = a"
+            ]
+        writeFileUTF8 (projectB </> "daml.yaml") $ unlines
+            [ "sdk-version: " <> sdkVersion
+            , "version: \"1.0\""
+            , "name: b"
+            , "source: daml/B.daml"
+            , "exposed-modules: [B]"
+            , "dependencies:"
+            , "  - daml-prim"
+            , "  - daml-stdlib"
+            , "  - " <> aDar
+            ]
+        withCurrentDirectory projectB $ callProcessQuiet "daml" ["build"]
+        assertBool "b.dar was not created." =<< doesFileExist bDar
+    , testCase "Top-level source files" $ do
+        -- Test that a source file in the project root will be included in the
+        -- DAR file. Regression test for #1048.
+        let projDir = tmpDir </> "proj"
+        createDirectoryIfMissing True projDir
+        writeFileUTF8 (projDir </> "A.daml") $ unlines
+          [ "daml 1.2"
+          , "module A (a) where"
+          , "a : ()"
+          , "a = ()"
+          ]
+        writeFileUTF8 (projDir </> "daml.yaml") $ unlines
+          [ "sdk-version: " <> sdkVersion
+          , "name: proj"
+          , "version: \"1.0\""
+          , "source: A.daml"
+          , "exposed-modules: [A]"
+          , "dependencies:"
+          , "  - daml-prim"
+          , "  - daml-stdlib"
+          ]
+        withCurrentDirectory projDir $ callProcessQuiet "daml" ["build"]
+        let dar = projDir </> "dist" </> "proj.dar"
+        assertBool "proj.dar was not created." =<< doesFileExist dar
+        darFiles <- Zip.filesInArchive . Zip.toArchive <$> BSL.readFile dar
+        assertBool "A.daml is missing" (("proj" </> "A.daml") `elem` darFiles)
+    ]
 
 quickstartTests :: FilePath -> FilePath -> TestTree
 quickstartTests quickstartDir mvnDir = testGroup "quickstart"

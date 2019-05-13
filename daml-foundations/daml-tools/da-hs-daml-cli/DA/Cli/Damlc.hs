@@ -11,7 +11,6 @@ module DA.Cli.Damlc (main) where
 import Control.Monad.Except
 import qualified Control.Monad.Managed             as Managed
 import DA.Cli.Damlc.Base
-import Data.List
 import Data.Tagged
 import Data.Maybe
 import Control.Exception
@@ -287,6 +286,7 @@ execPackageNew numProcessors mbOutFile =
                         Compiler.buildDar
                             compilerH
                             pMain
+                            pExposedModules
                             pName
                             pSdkVersion
                             [confFile]
@@ -359,7 +359,6 @@ createProjectPackageDb lfVersion fps = do
     let fps0 = filter (`notElem` basePackages) fps
     forM_ fps0 $ \fp -> do
         bs <- BSL.readFile fp
-        let pkgName = takeBaseName fp
         let archive = toArchive bs
         let confFiles =
                 [ e
@@ -374,7 +373,7 @@ createProjectPackageDb lfVersion fps = do
         let srcs =
                 [ e
                 | e <- zEntries archive
-                , pkgName `isPrefixOf` eRelativePath e
+                , takeExtension (eRelativePath e) `elem` [".daml", ".hie", ".hi"]
                 ]
         forM_ dalfs $ \dalf ->
             BSL.writeFile (dbPath </> eRelativePath dalf) (fromEntry dalf)
@@ -382,9 +381,10 @@ createProjectPackageDb lfVersion fps = do
             BSL.writeFile
                 (dbPath </> "package.conf.d" </> (takeFileName $ eRelativePath conf))
                 (fromEntry conf)
-        createDirectoryIfMissing True $ dbPath </> pkgName
-        forM_ srcs $ \src ->
-            BSL.writeFile (dbPath </> eRelativePath src) (fromEntry src)
+        forM_ srcs $ \src -> do
+            let path = dbPath </> eRelativePath src
+            createDirectoryIfMissing True $ takeDirectory path
+            BSL.writeFile path (fromEntry src)
     sdkRoot <- getSdkPath
     callCommand $
         unwords
@@ -422,9 +422,10 @@ execPackage filePath opts mbOutFile dumpPom dalfInput = withProjectRoot $ \relat
     -- but I don’t think that is worth the complexity of carrying around a type parameter.
     name = fromMaybe (error "Internal error: Package name was not present") (Compiler.optMbPackageName opts)
     buildDar path compilerH = do
-        -- We leave the sdk version blank, this command is being removed anytime now and not present
+        -- We leave the sdk version blank and the list of exposed modules empty.
+        -- This command is being removed anytime now and not present
         -- in the new daml assistant.
-        darOrErr <- runExceptT $ Compiler.buildDar compilerH path name "" [] dalfInput
+        darOrErr <- runExceptT $ Compiler.buildDar compilerH path [] name "" [] dalfInput
         case darOrErr of
           Left errs
            -> ioError $ userError $ unlines

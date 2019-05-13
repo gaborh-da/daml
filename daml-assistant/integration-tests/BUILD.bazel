@@ -76,6 +76,7 @@ da_haskell_test(
     hazel_deps = [
         "async",
         "base",
+        "bytestring",
         "directory",
         "extra",
         "filepath",
@@ -88,8 +89,10 @@ da_haskell_test(
         "tasty",
         "tasty-hunit",
         "text",
+        "zip-archive",
     ],
     deps = [
+        "//:sdk-version-hs-lib",
         "//daml-assistant/daml-helper:daml-helper-lib",
         "//libs-haskell/bazel-runfiles",
     ],
