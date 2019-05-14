@@ -10,7 +10,7 @@ import akka.stream.scaladsl.Source
 import com.digitalasset.api.util.TimeProvider
 import com.digitalasset.daml.lf.data.ImmArray
 import com.digitalasset.daml.lf.transaction.Node
-import com.digitalasset.daml.lf.value.Value.{AbsoluteContractId, ContractId}
+import com.digitalasset.daml.lf.value.Value.{AbsoluteContractId, VContractId}
 import com.digitalasset.ledger.api.domain.{ApplicationId, CommandId}
 import com.digitalasset.ledger.backend.api.v1.{
   RejectionReason,
@@ -111,7 +111,7 @@ class InMemoryLedger(
         RejectionReason.TimedOut(
           s"RecordTime $recordTime is after MaxiumRecordTime ${tx.maximumRecordTime}"))
     } else {
-      val toAbsCoid: ContractId => AbsoluteContractId =
+      val toAbsCoid: VContractId => AbsoluteContractId =
         SandboxEventIdFormatter.makeAbsCoid(transactionId)
       val mappedTx = tx.transaction.mapContractIdAndValue(toAbsCoid, _.mapContractId(toAbsCoid))
       // 5b. modify the ActiveContracts, while checking that we do not have double
