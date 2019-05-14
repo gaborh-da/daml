@@ -6,7 +6,6 @@ load(
     "da_scala_library",
     "da_scala_test_suite",
 )
-
 load("//language-support/scala/bindings-akka:variables.bzl", "bindings_akka_deps")
 
 da_scala_library(

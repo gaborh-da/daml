@@ -63,19 +63,21 @@ genrule(
 load("//language-support/scala/bindings-akka:variables.bzl", "bindings_akka_deps")
 load("//language-support/scala/bindings:variables.bzl", "bindings_scala_deps")
 
-da_scala_library (
+da_scala_library(
     name = "examples-quickstart-scala-codegen-lib",
     srcs = ["examples-quickstart-scala-codegen-out.srcjar"],
     deps = ["//language-support/scala/bindings"] + bindings_scala_deps.to_list(),
 )
 
-da_scala_binary (
+da_scala_binary(
     name = "examples-quickstart-scala-bin",
     srcs = glob(["quickstart-scala/application/src/main/scala/**/*.scala"]),
-    resources = glob(["quickstart-scala/application/src/main/resources/**/*"]),
     main_class = "com.digitalasset.quickstart.iou.IouMain",
+    resources = glob(["quickstart-scala/application/src/main/resources/**/*"]),
+    scalacopts = ["-Xsource:2.13"],
     deps = [
         ":examples-quickstart-scala-codegen-lib",
+        "//ledger-api/rs-grpc-bridge",
         "//language-support/scala/bindings-akka",
         "//3rdparty/jvm/com/typesafe/akka:akka_slf4j",
     ] + bindings_akka_deps.union(bindings_scala_deps).to_list(),
