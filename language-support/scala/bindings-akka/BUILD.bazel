@@ -33,6 +33,16 @@ testing_utils = [
     "src/test/scala/com/digitalasset/ledger/client/binding/SandboxBinding.scala",
 ]
 
+bindings_akka_test_deps = [
+    ":bindings-akka",
+    "//3rdparty/jvm/com/typesafe/akka:akka_stream_testkit",
+    "//3rdparty/jvm/org/scalacheck",
+    "//3rdparty/jvm/org/scalatest",
+    "//language-support/scala/sandbox-control",
+    "//ledger-api/rs-grpc-bridge",
+    "//language-support/scala/bindings-akka-testing",
+] + bindings_akka_deps.to_list()
+
 da_scala_library(
     name = "bindings-akka-testing",
     srcs = testing_utils,
@@ -42,25 +52,7 @@ da_scala_library(
     visibility = [
         "//visibility:public",
     ],
-    exports = [],
-    runtime_deps = [],
-    deps = [
-        ":bindings-akka",
-        "//3rdparty/jvm/ch/qos/logback:logback_classic",
-        "//3rdparty/jvm/com/github/pureconfig",
-        "//3rdparty/jvm/com/typesafe/akka:akka_stream",
-        "//3rdparty/jvm/com/typesafe/akka:akka_stream_testkit",
-        "//3rdparty/jvm/com/typesafe/scala_logging",
-        "//3rdparty/jvm/io/grpc:grpc_netty",
-        "//3rdparty/jvm/io/netty:netty_handler",
-        "//3rdparty/jvm/org/scalacheck",
-        "//3rdparty/jvm/org/scalatest",
-        "//language-support/scala/bindings",
-        "//language-support/scala/bindings-akka-testing",
-        "//language-support/scala/sandbox-control",
-        "//ledger-api/rs-grpc-bridge",
-        "//ledger/ledger-api-client",
-    ],
+    deps = bindings_akka_test_deps,
 )
 
 da_scala_test_suite(
@@ -74,23 +66,5 @@ da_scala_test_suite(
     visibility = [
         "//visibility:public",
     ],
-    runtime_deps = [],
-    deps = [
-        ":bindings-akka",
-        ":bindings-akka-testing",
-        "//3rdparty/jvm/ch/qos/logback:logback_classic",
-        "//3rdparty/jvm/com/github/pureconfig",
-        "//3rdparty/jvm/com/typesafe/akka:akka_stream",
-        "//3rdparty/jvm/com/typesafe/akka:akka_stream_testkit",
-        "//3rdparty/jvm/com/typesafe/scala_logging",
-        "//3rdparty/jvm/org/scalacheck",
-        "//3rdparty/jvm/org/scalatest",
-        "//3rdparty/jvm/org/scalaz:scalaz_core",
-        "//language-support/java/bindings:bindings-java",
-        "//language-support/scala/bindings",
-        "//language-support/scala/bindings-akka-testing",
-        "//language-support/scala/sandbox-control",
-        "//ledger-api/rs-grpc-bridge",
-        "//ledger/ledger-api-client",
-    ],
+    deps = bindings_akka_test_deps,
 )
