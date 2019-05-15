@@ -6,7 +6,21 @@ load(
     "da_scala_library",
     "da_scala_test_suite",
 )
-load("//language-support/scala/bindings-akka:variables.bzl", "bindings_akka_deps")
+
+bindings_akka_deps = depset([
+    "//3rdparty/jvm/ch/qos/logback:logback_classic",
+    "//3rdparty/jvm/com/github/pureconfig",
+    "//3rdparty/jvm/com/typesafe/akka:akka_stream",
+    "//3rdparty/jvm/com/typesafe/scala_logging",
+    "//3rdparty/jvm/io/grpc:grpc_netty",
+    "//3rdparty/jvm/io/netty:netty_handler",
+    "//3rdparty/jvm/io/netty:netty_tcnative_boringssl_static",
+    "//3rdparty/jvm/org/scalaz:scalaz_core",
+    "//language-support/java/bindings:bindings-java",
+    "//language-support/scala/bindings",
+    "//ledger-api/rs-grpc-akka",
+    "//ledger/ledger-api-client",
+])
 
 da_scala_library(
     name = "bindings-akka",
@@ -19,8 +33,7 @@ da_scala_library(
     visibility = [
         "//visibility:public",
     ],
-    exports = [],
-    runtime_deps = [],
+    exports = bindings_akka_deps.to_list(),
     deps = bindings_akka_deps.to_list(),
 )
 

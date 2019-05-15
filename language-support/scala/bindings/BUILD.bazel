@@ -6,7 +6,13 @@ load(
     "da_scala_library",
     "da_scala_test_suite",
 )
-load("//language-support/scala/bindings:variables.bzl", "bindings_scala_deps")
+
+bindings_scala_deps = depset([
+    "//3rdparty/jvm/com/github/ghik:silencer_lib",
+    "//3rdparty/jvm/io/grpc:grpc_core",
+    "//3rdparty/jvm/org/scalaz:scalaz_core",
+    "//ledger-api/grpc-definitions:ledger-api-scalapb",
+])
 
 da_scala_library(
     name = "bindings",
@@ -22,9 +28,7 @@ da_scala_library(
     visibility = [
         "//visibility:public",
     ],
-    exports = [
-        "//ledger-api/grpc-definitions:ledger-api-scalapb",
-    ],
+    exports = bindings_scala_deps.to_list(),
     deps = bindings_scala_deps.to_list(),
 )
 
