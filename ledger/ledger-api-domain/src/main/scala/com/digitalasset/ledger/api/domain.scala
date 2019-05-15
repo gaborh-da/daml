@@ -196,7 +196,7 @@ object domain {
 
   sealed trait TransactionIdTag
 
-  type TransactionId = String @@ TransactionIdTag
+  type TransactionId = Ref.TransactionId @@ TransactionIdTag
   val TransactionId: Tag.TagOf[TransactionIdTag] = Tag.of[TransactionIdTag]
 
   sealed trait ChoiceTag
@@ -211,18 +211,8 @@ object domain {
 
   sealed trait EventIdTag
 
-  type EventId = String @@ EventIdTag
+  type EventId = Ref.LedgerName @@ EventIdTag
   val EventId: Tag.TagOf[EventIdTag] = Tag.of[EventIdTag]
-
-  sealed trait PackageIdTag
-
-  type PackageId = String @@ PackageIdTag
-  val PackageId: Tag.TagOf[PackageIdTag] = Tag.of[PackageIdTag]
-
-  sealed trait LedgerIdTag
-
-  type LedgerId = String @@ LedgerIdTag
-  val LedgerId: Tag.TagOf[LedgerIdTag] = Tag.of[LedgerIdTag]
 
   sealed trait ApplicationIdTag
 
@@ -230,7 +220,7 @@ object domain {
   val ApplicationId: Tag.TagOf[ApplicationIdTag] = Tag.of[ApplicationIdTag]
 
   case class Commands(
-      ledgerId: LedgerId,
+      ledgerId: Ref.LedgerId,
       workflowId: Option[WorkflowId],
       applicationId: ApplicationId,
       commandId: CommandId,

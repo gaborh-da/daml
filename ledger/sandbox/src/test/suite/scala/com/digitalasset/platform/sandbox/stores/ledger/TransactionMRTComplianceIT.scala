@@ -8,7 +8,7 @@ import java.time.Instant
 import akka.stream.scaladsl.Sink
 import com.digitalasset.api.util.TimeProvider
 import com.digitalasset.daml.lf.data.{ImmArray, Ref}
-import com.digitalasset.daml.lf.transaction.Transaction.{ContractId, NodeId, Value}
+import com.digitalasset.daml.lf.transaction.Transaction.{TContractId, NodeId, Value}
 import com.digitalasset.daml.lf.transaction.{BlindingInfo, GenTransaction}
 import com.digitalasset.ledger.api.testing.utils.{
   AkkaBeforeAndAfterAll,
@@ -51,7 +51,7 @@ class TransactionMRTComplianceIT
 
   override def timeLimit: Span = 60.seconds
 
-  val ledgerId = "ledgerId"
+  val ledgerId = Ref.LedgerName.assertFromString("ledgerId")
   val timeProvider = TimeProvider.Constant(Instant.EPOCH.plusSeconds(10))
 
   /** Overriding this provides an easy way to narrow down testing to a single implementation. */
@@ -73,7 +73,10 @@ class TransactionMRTComplianceIT
     "reject transactions with a record time after the MRT" in allFixtures { ledger =>
       val emptyBlinding = BlindingInfo(Map.empty, Map.empty, Map.empty)
       val dummyTransaction =
-        GenTransaction[NodeId, ContractId, Value[ContractId]](Map.empty, ImmArray.empty, Set.empty)
+        GenTransaction[NodeId, TContractId, Value[TContractId]](
+          Map.empty,
+          ImmArray.empty,
+          Set.empty)
       val submission = TransactionSubmission(
         "cmdId",
         "wfid",

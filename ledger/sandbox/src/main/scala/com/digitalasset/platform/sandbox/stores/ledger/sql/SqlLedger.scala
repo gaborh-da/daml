@@ -10,14 +10,14 @@ import akka.stream.scaladsl.{GraphDSL, Keep, MergePreferred, Sink, Source, Sourc
 import akka.stream.{Materializer, OverflowStrategy, QueueOfferResult, SourceShape}
 import akka.{Done, NotUsed}
 import com.digitalasset.api.util.TimeProvider
-import com.digitalasset.daml.lf.data.ImmArray
+import com.digitalasset.daml.lf.data.Ref.LedgerId
+import com.digitalasset.daml.lf.data.{ImmArray, Ref}
 import com.digitalasset.daml.lf.transaction.Node
 import com.digitalasset.daml.lf.value.Value
 import com.digitalasset.daml.lf.value.Value.{AbsoluteContractId, VContractId}
 import com.digitalasset.ledger.backend.api.v1.{
   RejectionReason,
   SubmissionResult,
-  TransactionId,
   TransactionSubmission
 }
 import com.digitalasset.platform.akkastreams.dispatcher.Dispatcher
@@ -74,7 +74,7 @@ object SqlLedger {
   //jdbcUrl must have the user/password encoded in form of: "jdbc:postgresql://localhost/test?user=fred&password=secret"
   def apply(
       jdbcUrl: String,
-      ledgerId: Option[String],
+      ledgerId: Option[LedgerId],
       timeProvider: TimeProvider,
       acs: ActiveContractsInMemory,
       initialLedgerEntries: ImmArray[LedgerEntryWithLedgerEndIncrement],
@@ -106,7 +106,7 @@ object SqlLedger {
 }
 
 private class SqlLedger(
-    val ledgerId: String,
+    val ledgerId: LedgerId,
     headAtInitialization: Long,
     ledgerDao: LedgerDao,
     timeProvider: TimeProvider,
@@ -219,7 +219,7 @@ private class SqlLedger(
 
   override def publishTransaction(tx: TransactionSubmission): Future[SubmissionResult] =
     enqueue { offset =>
-      val transactionId = offset.toString
+      val transactionId = Ref.LedgerName.assertFromString(offset.toString)
       val toAbsCoid: VContractId => AbsoluteContractId =
         SandboxEventIdFormatter.makeAbsCoid(transactionId)
 
@@ -287,7 +287,7 @@ private class SqlLedger(
   }
 
   override def lookupTransaction(
-      transactionId: TransactionId): Future[Option[(Long, LedgerEntry.Transaction)]] =
+      transactionId: Ref.TransactionId): Future[Option[(Long, LedgerEntry.Transaction)]] =
     ledgerDao
       .lookupLedgerEntry(transactionId.toLong)
       .map(_.collect[(Long, LedgerEntry.Transaction)] {
@@ -316,7 +316,7 @@ private class SqlLedgerFactory(ledgerDao: LedgerDao) {
     * @return a compliant Ledger implementation
     */
   def createSqlLedger(
-      initialLedgerId: Option[String],
+      initialLedgerId: Option[LedgerId],
       timeProvider: TimeProvider,
       startMode: SqlStartMode,
       acs: ActiveContractsInMemory,
@@ -344,9 +344,9 @@ private class SqlLedgerFactory(ledgerDao: LedgerDao) {
     ledgerDao.reset()
 
   private def initialize(
-      initialLedgerId: Option[String],
+      initialLedgerId: Option[Ref.LedgerId],
       acs: ActiveContractsInMemory,
-      initialLedgerEntries: ImmArray[LedgerEntryWithLedgerEndIncrement]): Future[String] = {
+      initialLedgerEntries: ImmArray[LedgerEntryWithLedgerEndIncrement]): Future[Ref.LedgerId] = {
     // Note that here we only store the ledger entry and we do not update anything else, such as the
     // headRef. We also are not concerns with heartbeats / checkpoints. This is OK since this initialization
     // step happens before we start up the sql ledger at all, so it's running in isolation.
@@ -409,12 +409,12 @@ private class SqlLedgerFactory(ledgerDao: LedgerDao) {
     }
   }
 
-  private def ledgerFound(foundLedgerId: String) = {
+  private def ledgerFound(foundLedgerId: LedgerId) = {
     logger.info(s"Found existing ledger with id: $foundLedgerId")
     Future.successful(foundLedgerId)
   }
 
-  private def doInit(ledgerId: String): Future[Unit] = {
+  private def doInit(ledgerId: LedgerId): Future[Unit] = {
     logger.info(s"Initializing ledger with id: $ledgerId")
     ledgerDao.initializeLedger(ledgerId, 0)
   }

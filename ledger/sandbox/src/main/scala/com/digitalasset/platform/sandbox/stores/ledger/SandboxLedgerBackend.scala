@@ -7,6 +7,7 @@ import akka.NotUsed
 import akka.stream.Materializer
 import akka.stream.scaladsl.Source
 import com.digitalasset.daml.lf.data.Ref
+import com.digitalasset.daml.lf.data.Ref.{LedgerId, Party, TransactionId}
 import com.digitalasset.daml.lf.transaction.Node
 import com.digitalasset.daml.lf.transaction.Transaction.{Value => TxValue}
 import com.digitalasset.daml.lf.value.Value
@@ -22,7 +23,7 @@ import com.digitalasset.platform.sandbox.stores.ActiveContracts
 import scala.concurrent.{ExecutionContext, Future}
 
 class SandboxLedgerBackend(ledger: Ledger)(implicit mat: Materializer) extends LedgerBackend {
-  override def ledgerId: String = ledger.ledgerId
+  def ledgerId: LedgerId = ledger.ledgerId
 
   private class SandboxSubmissionHandle extends SubmissionHandle {
     override def abort: Future[Unit] = Future.successful(())

@@ -318,7 +318,7 @@ class TransactionServiceRequestValidatorTest extends WordSpec with ValidatorTest
       "work with missing traceContext" in {
         inside(sut.validateLedgerEnd(endReq.update(_.optionalTraceContext := None))) {
           case Right(out) =>
-            out should have('ledgerId (domain.LedgerId(expectedLedgerId)))
+            out should have('ledgerId (expectedLedgerId))
             out.traceContext shouldBe empty
         }
       }
@@ -326,7 +326,7 @@ class TransactionServiceRequestValidatorTest extends WordSpec with ValidatorTest
       "work with present traceContext" in {
         inside(sut.validateLedgerEnd(endReq)) {
           case Right(out) =>
-            out should have('ledgerId (domain.LedgerId(expectedLedgerId)))
+            out should have('ledgerId (expectedLedgerId))
             isExpectedTraceContext(out.traceContext.value)
         }
       }
@@ -358,7 +358,7 @@ class TransactionServiceRequestValidatorTest extends WordSpec with ValidatorTest
       "work with missing traceContext" in {
         inside(sut.validateTransactionById(txByIdReq.update(_.optionalTraceContext := None))) {
           case Right(out) =>
-            out should have('ledgerId (domain.LedgerId(expectedLedgerId)))
+            out should have('ledgerId (expectedLedgerId))
             out.traceContext shouldBe empty
         }
       }
@@ -366,7 +366,7 @@ class TransactionServiceRequestValidatorTest extends WordSpec with ValidatorTest
       "work with present TraceContext" in {
         inside(sut.validateTransactionById(txByIdReq)) {
           case Right(out) =>
-            out should have('ledgerId (domain.LedgerId(expectedLedgerId)))
+            out should have('ledgerId (expectedLedgerId))
             isExpectedTraceContext(out.traceContext.value)
         }
       }
@@ -400,7 +400,7 @@ class TransactionServiceRequestValidatorTest extends WordSpec with ValidatorTest
       "work with missing traceContext" in {
         inside(sut.validateTransactionByEventId(txByEvIdReq.update(_.optionalTraceContext := None))) {
           case Right(out) =>
-            out should have('ledgerId (domain.LedgerId(expectedLedgerId)))
+            out should have('ledgerId (expectedLedgerId))
             out.traceContext shouldBe empty
         }
       }
@@ -408,7 +408,7 @@ class TransactionServiceRequestValidatorTest extends WordSpec with ValidatorTest
       "work with present TraceContext" in {
         inside(sut.validateTransactionByEventId(txByEvIdReq)) {
           case Right(out) =>
-            out should have('ledgerId (domain.LedgerId(expectedLedgerId)))
+            out should have('ledgerId (expectedLedgerId))
             isExpectedTraceContext(out.traceContext.value)
         }
       }

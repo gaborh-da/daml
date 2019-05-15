@@ -6,6 +6,7 @@ package com.digitalasset.platform.sandbox.services
 import akka.NotUsed
 import akka.stream.Materializer
 import akka.stream.scaladsl.Source
+import com.digitalasset.daml.lf.data.Ref.LedgerId
 import com.digitalasset.grpc.adapter.ExecutionSequencerFactory
 import com.digitalasset.ledger.api.v1.ledger_configuration_service.LedgerConfigurationServiceGrpc.LedgerConfigurationService
 import com.digitalasset.ledger.api.v1.ledger_configuration_service.{
@@ -39,7 +40,7 @@ class LedgerConfigurationServiceImpl private (ledgerConfiguration: LedgerConfigu
 }
 
 object LedgerConfigurationServiceImpl {
-  def apply(ledgerConfiguration: LedgerConfiguration, ledgerId: String)(
+  def apply(ledgerConfiguration: LedgerConfiguration, ledgerId: LedgerId)(
       implicit ec: ExecutionContext,
       esf: ExecutionSequencerFactory,
       mat: Materializer)

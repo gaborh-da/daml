@@ -3,6 +3,7 @@
 
 package com.digitalasset.platform.sandbox.services
 
+import com.digitalasset.daml.lf.data.Ref.LedgerId
 import com.digitalasset.ledger.api.v1.package_service.PackageServiceGrpc.PackageService
 import com.digitalasset.ledger.api.v1.package_service._
 import com.digitalasset.platform.api.grpc.GrpcApiService
@@ -50,7 +51,7 @@ class SandboxPackageService private (backend: PackageServiceBackend)
 }
 
 object SandboxPackageService {
-  def apply(backend: PackageServiceBackend, ledgerId: String)(implicit ec: ExecutionContext)
+  def apply(backend: PackageServiceBackend, ledgerId: LedgerId)(implicit ec: ExecutionContext)
     : PackageService with BindableService with PackageServiceLogging =
     new PackageServiceValidation(new SandboxPackageService(backend), ledgerId) with BindableService
     with PackageServiceLogging {
