@@ -3,118 +3,103 @@
 
 package com.daml.ledger.api.testtool
 
-import java.io.{File, PrintWriter, StringWriter}
+import java.io.File
 import java.nio.file.{Files, Path, Paths, StandardCopyOption}
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
 import com.digitalasset.daml.lf.UniversalArchiveReader
-import com.digitalasset.daml.lf.types.{Ledger => L}
-import com.digitalasset.daml.lf.data.Ref.{PackageId, QualifiedName}
-import com.digitalasset.daml.lf.engine.testing.SemanticTester
+import com.digitalasset.daml.lf.data.Ref.PackageId
 import com.digitalasset.daml.lf.lfpackage.{Ast, Decode}
 import com.digitalasset.grpc.adapter.AkkaExecutionSequencerPool
-import com.digitalasset.platform.apitesting.{LedgerContext, PlatformChannels, RemoteServerResource}
+import com.digitalasset.platform.PlatformApplications.RemoteApiEndpoint
 import com.digitalasset.platform.common.LedgerIdMode
-import com.digitalasset.platform.semantictest.SemanticTestAdapter
+import com.digitalasset.platform.semantictest.SandboxSemanticTestsLfRunner
+import com.digitalasset.platform.services.time.TimeProviderType
+import com.digitalasset.platform.testing.LedgerBackend
+import org.scalatest.time.{Seconds, Span}
 
 import scala.concurrent.duration._
-import scala.concurrent.{Await, ExecutionContext}
-import scala.collection.breakOut
-import scala.util.Random
+import scala.concurrent.{Await, ExecutionContext, Future}
+
+object LedgerApiTestToolHelper {
+  def runWithTimeout[T](timeout: Duration)(f: => T)(implicit ec: ExecutionContext): Option[T] = {
+    Await.result(Future(f), timeout).asInstanceOf[Option[T]]
+  }
+
+  def runWithTimeout[T](timeout: Duration, default: T)(f: => T)(
+    implicit ec: ExecutionContext): T = {
+    runWithTimeout(timeout)(f).getOrElse(default)
+  }
+}
 
 object LedgerApiTestTool {
 
   def main(args: Array[String]): Unit = {
-    implicit val system: ActorSystem = ActorSystem("LedgerApiTestTool")
-    implicit val mat: ActorMaterializer = ActorMaterializer()(system)
-    implicit val ec: ExecutionContext = mat.executionContext
+    implicit val toolSystem: ActorSystem = ActorSystem("LedgerApiTestTool")
+    implicit val toolMaterializer: ActorMaterializer = ActorMaterializer()(toolSystem)
+    implicit val ec: ExecutionContext = toolMaterializer.executionContext
     implicit val esf: AkkaExecutionSequencerPool =
-      new AkkaExecutionSequencerPool("esf-" + this.getClass.getSimpleName)(system)
+      new AkkaExecutionSequencerPool("esf-" + this.getClass.getSimpleName)(toolSystem)
 
     val testResources = List("/ledger/ledger-api-integration-tests/SemanticTests.dar")
 
-    val config = Cli
+    val toolConfig = Cli
       .parse(args)
       .getOrElse(sys.exit(1))
 
-    if (config.extract) {
+    if (toolConfig.extract) {
       extractTestFiles(testResources)
       System.exit(0)
     }
 
-    val packages: Map[PackageId, Ast.Package] = testResources
-      .flatMap(loadAllPackagesFromResource)(breakOut)
-
-    val scenarios = SemanticTester.scenarios(packages)
-    val nScenarios: Int = scenarios.foldLeft(0)((c, xs) => c + xs._2.size)
-
-    println(s"Running $nScenarios scenarios against ${config.host}:${config.port}...")
-
-    val ledgerResource = RemoteServerResource(config.host, config.port, config.tlsConfig)
-      .map {
-        case PlatformChannels(channel) =>
-          LedgerContext.SingleChannelContext(channel, LedgerIdMode.Dynamic(), packages.keys)
-      }
-    ledgerResource.setup()
-    val ledger = ledgerResource.value
-
-    if (config.performReset) {
-      Await.result(ledger.reset(), 10.seconds)
-    }
+    //    if (config.performReset) {
+    //      Await.result(ledger.reset(), 10.seconds)
+    //    }
     var failed = false
 
-    val runSuffix = "-" + Random.alphanumeric.take(10).mkString
-    val partyNameMangler = (partyText: String) => partyText + runSuffix
-    val commandIdMangler: ((QualifiedName, Int, L.NodeId) => String) = (scenario, stepId, nodeId) =>
-      s"ledger-api-test-tool-$scenario-$stepId-$nodeId-$runSuffix"
-
     try {
-      scenarios.foreach {
-        case (pkgId, names) =>
-          val tester = new SemanticTester(
-            parties =>
-              new SemanticTestAdapter(
-                ledger,
-                packages,
-                parties,
-                timeoutScaleFactor = config.timeoutScaleFactor),
-            pkgId,
-            packages,
-            partyNameMangler,
-            commandIdMangler
-          )
-          names
-            .foreach { name =>
-              println(s"Testing scenario: $name")
-              val _ = try {
-                Await.result(
-                  tester.testScenario(name),
-                  (60 * config.timeoutScaleFactor).seconds
-                )
-              } catch {
-                case (t: Throwable) =>
-                  val sw = new StringWriter
-                  t.printStackTrace(new PrintWriter(sw))
-                  sys.error(
-                    s"Running scenario $name failed with: " + t
-                      .getMessage() + "\n\nWith stacktrace:\n" + sw
-                      .toString() + "\n\nTesting tool own stacktrace is:")
-              }
-            }
+
+
+      val integrationTestResource = testResources.head
+      val is = getClass.getResourceAsStream(integrationTestResource)
+      if (is == null) sys.error(s"Could not find $integrationTestResource in classpath")
+      val targetPath: Path = Files.createTempFile("ledger-api-test-tool-", "-test.dar")
+      Files.copy(is, targetPath, StandardCopyOption.REPLACE_EXISTING);
+
+      val semanticTestsRunner = new SandboxSemanticTestsLfRunner {
+        override def fixtureIdsEnabled: Set[LedgerBackend] =
+          Set(LedgerBackend.RemoteApiProxy)
+
+        override implicit lazy val patienceConfig: PatienceConfig = PatienceConfig(Span(60L, Seconds))
+
+        override protected implicit def system: ActorSystem = toolSystem
+
+        override protected implicit def materializer: ActorMaterializer = toolMaterializer
+
+        override protected def config: Config =
+          Config
+            .default.withTimeProvider(TimeProviderType.WallClock)
+            .withLedgerIdMode(LedgerIdMode.Dynamic())
+            .withRemoteApiEndpoint(RemoteApiEndpoint.default.withHost(toolConfig.host).withPort(toolConfig.port).withTlsConfigOption(toolConfig.tlsConfig))
+            .withDarFile(targetPath)
       }
-      println("All scenarios completed.")
+      LedgerApiTestToolHelper.runWithTimeout(1.seconds) {
+        Some(semanticTestsRunner.execute())
+//          "Transaction Service when querying ledger end should return the value if ledger Ids match"
+      }
+
+
     } catch {
       case (t: Throwable) =>
         failed = true
-        if (!config.mustFail) throw t
+        if (!toolConfig.mustFail) throw t
     } finally {
-      ledgerResource.close()
-      mat.shutdown()
-      val _ = Await.result(system.terminate(), 5.seconds)
+      toolMaterializer.shutdown()
+      val _ = Await.result(toolSystem.terminate(), 5.seconds)
     }
 
-    if (config.mustFail) {
+    if (toolConfig.mustFail) {
       if (failed) println("One or more scenarios failed as expected.")
       else
         throw new RuntimeException(
