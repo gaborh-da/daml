@@ -9,14 +9,14 @@ import org.typelevel.paiges.Doc._
 import com.digitalasset.daml.lf.value.Value
 import Value._
 import com.digitalasset.daml.lf.transaction.Node._
-import com.digitalasset.daml.lf.types.{Ledger => L}
+import com.digitalasset.daml.lf.types.{LedgerForScenarios => L}
 import com.digitalasset.daml.lf.data.Ref._
 import com.digitalasset.daml.lf.transaction.Transaction
 import com.digitalasset.daml.lf.transaction.Transaction.PartialTransaction
 import com.digitalasset.daml.lf.speedy.SError._
 import com.digitalasset.daml.lf.speedy.SValue._
 import com.digitalasset.daml.lf.speedy.SBuiltin._
-import com.digitalasset.daml.lf.types.Ledger.CommitError
+import com.digitalasset.daml.lf.types.LedgerForScenarios.CommitError
 
 //
 // Pretty-printer for the interpreter errors and the scenario ledger
@@ -220,7 +220,7 @@ object Pretty {
     // the maintainers are induced from the key -- so don't clutter
     prettyVersionedValue(false)(key.key)
 
-  def prettyNodeInfo(l: L.Ledger)(nodeId: L.NodeId): Doc = {
+  def prettyNodeInfo(l: L.Ledger)(nodeId: L.ScenarioNodeId): Doc = {
     def arrowRight(d: Doc) = text("└─>") & d
     def meta(d: Doc) = text("│  ") & d
 
@@ -234,7 +234,10 @@ object Pretty {
         }
       case ea: NodeFetch[AbsoluteContractId] =>
         "ensure active" &: prettyContractId(ea.coid)
-      case ex: NodeExercises[L.NodeId, AbsoluteContractId, Transaction.Value[AbsoluteContractId]] =>
+      case ex: NodeExercises[
+            L.ScenarioNodeId,
+            AbsoluteContractId,
+            Transaction.Value[AbsoluteContractId]] =>
         val children =
           if (ex.children.nonEmpty)
             text("children:") / stack(ex.children.toList.map(prettyNodeInfo(l)))
@@ -292,7 +295,7 @@ object Pretty {
     )
   }
 
-  def prettyLedgerNodeId(n: L.NodeId): Doc =
+  def prettyLedgerNodeId(n: L.ScenarioNodeId): Doc =
     char('#') + text(n.id)
 
   def prettyContractInst(coinst: ContractInst[Transaction.Value[VContractId]]): Doc =
@@ -319,7 +322,7 @@ object Pretty {
       comma + space,
       c.activeContracts.toList
         .sortWith(ltNodeId)
-        .map((acoid: AbsoluteContractId) => prettyLedgerNodeId(L.NodeId(acoid))))
+        .map((acoid: AbsoluteContractId) => prettyLedgerNodeId(L.ScenarioNodeId(acoid))))
   }
 
   def prettyPackageId(pkgId: PackageId): Doc =
