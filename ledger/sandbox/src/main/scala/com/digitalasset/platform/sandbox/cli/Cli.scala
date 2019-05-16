@@ -115,7 +115,7 @@ object Cli {
     //TODO (robert): Think about all implications of allowing users to set the ledger ID.
     opt[String]("ledgerid")
       .optional()
-      .action((id, c) => c.copy(ledgerIdMode = LedgerIdMode.Static(Ref.LedgerName.assertFromString(id))))
+      .action((id, c) => c.copy(ledgerIdMode = LedgerIdMode.Static(Ref.LedgerString.assertFromString(id))))
       .text("Sandbox ledger ID. If missing, a random unique ledger ID will be used. Only useful with persistent stores.")
 
     help("help").text("Print the usage text")

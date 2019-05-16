@@ -35,7 +35,7 @@ object LedgerForScenarios {
       commitPrefix: LedgerName,
       txnid: Transaction.NodeId
   ): AbsoluteContractId =
-    AbsoluteContractId(LedgerName.concat(commitPrefix, txnid.name))
+    AbsoluteContractId(LedgerString.concat(commitPrefix, txnid.name))
 
   @inline
   def relativeToAbsoluteContractId(
@@ -55,13 +55,13 @@ object LedgerForScenarios {
         relativeToAbsoluteContractId(commitPrefix, rcoid)
     }
 
-  private val `:` = LedgerName.assertFromString(":")
+  private val `:` = LedgerString.assertFromString(":")
 
   case class ScenarioTransactionId(index: Int) extends Ordered[ScenarioTransactionId] {
     def next: ScenarioTransactionId = ScenarioTransactionId(index + 1)
-    val id: TransactionId = LedgerName.assertFromString(index.toString)
+    val id: TransactionId = LedgerString.assertFromString(index.toString)
     def compare(that: ScenarioTransactionId): Int = index compare that.index
-    def makeCommitPrefix: LedgerName = LedgerName.concat(id, `:`)
+    def makeCommitPrefix: LedgerName = LedgerString.concat(id, `:`)
   }
 
   /** Errors */

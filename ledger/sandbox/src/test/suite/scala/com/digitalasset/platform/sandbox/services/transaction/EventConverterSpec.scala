@@ -54,7 +54,7 @@ class EventConverterSpec
   private implicit def party(s: String): Ref.Party = Ref.Party.assertFromString(s)
   private implicit def pkgId(s: String): Ref.PackageId = Ref.PackageId.assertFromString(s)
   private implicit def name(s: String): Ref.Name = Ref.Name.assertFromString(s)
-  private implicit def ledgerName(s: String): Ref.LedgerName = Ref.LedgerName.assertFromString(s)
+  private implicit def ledgerName(s: String): Ref.LedgerName = Ref.LedgerString.assertFromString(s)
 
   type LfTx = com.digitalasset.daml.lf.transaction.Transaction.Transaction
 

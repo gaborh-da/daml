@@ -3,7 +3,7 @@
 
 package com.digitalasset.ledger.api
 
-import com.digitalasset.daml.lf.data.Ref.LedgerName
+import com.digitalasset.daml.lf.data.Ref.LedgerString
 import com.digitalasset.daml.lf.data.Time
 import com.digitalasset.daml.lf.testing.parser.Implicits._
 import com.digitalasset.ledger.api.v1.value.Value.Sum
@@ -58,7 +58,7 @@ class ValueConversionRoundTripTest
          """
 
   private val sut = new CommandSubmissionRequestValidator(
-    LedgerName.assertFromString("ledger-id"),
+    LedgerString.assertFromString("ledger-id"),
     new IdentifierResolver(_ => Future.successful(Some(pckg))))
 
   private def roundTrip(v: Value): Either[String, Value] =

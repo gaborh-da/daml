@@ -160,7 +160,7 @@ class CommandSubmissionRequestValidator(
 
   def validateValue(value: Value): Either[StatusRuntimeException, domain.Value] = value.sum match {
     case Sum.ContractId(cId) =>
-      Ref.LedgerName
+      Ref.LedgerString
         .fromString(cId)
         .left
         .map(invalidArgument)
